@@ -106,5 +106,10 @@ namespace Alura.Loja.Testes.ConsoleApp
 
             return lista;
         }
+
+        public void Adcionar(Produto p)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

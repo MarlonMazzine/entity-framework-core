@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,83 +7,36 @@ namespace Alura.Loja.Testes.ConsoleApp
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            //GravarUsandoAdoNet();
-            //GravarUsandoEntity();
-            //RecuperarProdutos();
-            //ExcluirProdutos();
-            //RecuperarProdutos();
-            AtualizarProduto();
-        }
-
-        private static void AtualizarProduto()
-        {
-            GravarUsandoEntity();
-            RecuperarProdutos();
-
-            using (var repo = new ProdutoDAOEntity())
+            using (var contexto = new LojaContext())
             {
-                Produto primeiro = repo.Produtos().First();
-                primeiro.Nome = "Harry Potter e a Ordem da Fênix - Editado";
+                var produtos = contexto.Produtos.ToList();
 
-                repo.Atualizar(primeiro);
-            }
+                EixibirEntries(contexto.ChangeTracker.Entries());
 
-            RecuperarProdutos();
-        } 
-
-        private static void ExcluirProdutos()
-        {
-            using (var repo = new ProdutoDAOEntity())
-            {
-                IList<Produto> produtos = repo.Produtos().ToList();
-
-                foreach (var item in produtos)
+                var novoProduto = new Produto()
                 {
-                    repo.Remover(item);
-                }
+                    Nome = "Sabão em pó",
+                    Categoria = "Limpeza",
+                    Preco = 4.99
+                };
+
+                contexto.Produtos.Add(novoProduto);
+                contexto.Remove(novoProduto);
+                EixibirEntries(contexto.ChangeTracker.Entries());
+                contexto.SaveChanges();
+                EixibirEntries(contexto.ChangeTracker.Entries());
             }
         }
 
-        private static void RecuperarProdutos()
+        private static void EixibirEntries(IEnumerable<EntityEntry> entries)
         {
-            using (var repo = new ProdutoDAOEntity())
+            Console.WriteLine("=====================");
+
+            foreach (var e in entries)
             {
-                IList<Produto> produtos = repo.Produtos().ToList();
-
-                Console.WriteLine("Foram encontrados {0} produto(s).", produtos.Count);
-
-                foreach (var item in produtos)
-                {
-                    Console.WriteLine(item.Nome);
-                }
-            }
-        }
-
-        private static void GravarUsandoEntity()
-        {
-            Produto p = new Produto();
-            p.Nome = "Harry Potter e a Ordem da Fênix";
-            p.Categoria = "Livros";
-            p.Preco = 19.89;
-
-            using (var contexto = new ProdutoDAOEntity())
-            {
-                contexto.Adcionar(p);
-            }
-        }
-
-        private static void GravarUsandoAdoNet()
-        {
-            Produto p = new Produto();
-            p.Nome = "Harry Potter e a Ordem da Fênix";
-            p.Categoria = "Livros";
-            p.Preco = 19.89;
-
-            using (var repo = new ProdutoDAO())
-            {
-                repo.Adicionar(p);
+                Console.WriteLine(e.Entity.ToString() + " - " + e.State);
             }
         }
     }
