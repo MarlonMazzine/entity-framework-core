@@ -35,8 +35,6 @@ namespace Alura.Loja.Testes.ConsoleApp
                 {
                     Console.WriteLine(item);
                 }
-
-
             }
         }
 

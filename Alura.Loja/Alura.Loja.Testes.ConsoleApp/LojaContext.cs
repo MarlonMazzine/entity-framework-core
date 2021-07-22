@@ -10,9 +10,9 @@ namespace Alura.Loja.Testes.ConsoleApp
         public DbSet<Promocao> Promocoes { get; set; }
         public DbSet<Cliente> Clientes { get; internal set; }
 
-        //Dessa maneira eu faço chave primária composta
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Dessa maneira eu faço chave primária composta
             modelBuilder
                 .Entity<PromocaoProduto>()
                 .HasKey(pp => new { pp.PromocaoId, pp.ProdutoId });
